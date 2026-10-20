@@ -1,36 +1,92 @@
-import React from "react";
-import Nav from "../standardcomps/nav";
-import CurrentTasks from "../task/currenttask";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import {
-  createNewTask,
-  handle_change_newtask,
-} from "../../actions/todoActions";
-import SideNav from "../dashboard/sidenav";
-import Footer from "../standardcomps/footer";
+import { logout, getBoards } from "../../actions/todoActions";
+import BoardTabs from "./boardtabs";
+import CurrentTasks from "../task/currenttask";
+import TrashView from "../task/trashview";
+import SideNav from "./sidenav";
+import "./dashboard.css";
 
-const Dashboard = () => {
+const Dashboard = (props) => {
+  const navigate = useNavigate();
+  const [drafting, setDrafting] = useState(false);
+  const [inTrash, setInTrash] = useState(false);
+
+  // load the tabs first, so lists know which tab they belong to
+  useEffect(() => {
+    props.getBoards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLogout = () => {
+    props.logout();
+    navigate("/");
+  };
+
   return (
-    <>
-      <Nav />
-      <div className="dashbox">
-        <SideNav />
-        <CurrentTasks />
-      </div>
-      <div className="dashfoot">
-        <Footer />
-      </div>
-    </>
+    <div className="dash">
+      <header className="dash-header">
+        <span className="dash-brand">Task Note</span>
+        <button className="dash-link" onClick={handleLogout}>
+          Log out
+        </button>
+      </header>
+
+      <main className="dash-main">
+        <div className="dash-bar">
+          <h1 className="dash-heading">{inTrash ? "Trash" : "Your tasks"}</h1>
+          <div className="dash-header-actions">
+            <SideNav
+              drafting={drafting}
+              onNew={() => setDrafting(true)}
+              inTrash={inTrash}
+              onToggleTrash={() => {
+                setDrafting(false);
+                setInTrash(!inTrash);
+              }}
+            />
+          </div>
+        </div>
+        {!inTrash && (
+          <BoardTabs onSwitch={() => setDrafting(false)} />
+        )}
+        <div className="dash-divider" aria-hidden="true" />
+        <div className="dash-content">
+          {!props.boardsReady ? null : inTrash ? (
+            <TrashView />
+          ) : (
+            <CurrentTasks
+              drafting={drafting}
+              onDraftDone={() => setDrafting(false)}
+            />
+          )}
+        </div>
+      </main>
+
+      <footer className="dash-footer">
+        <a
+          href="https://github.com/jonathan-portillo/todo-frontend-"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
+        <a
+          href="https://www.linkedin.com/in/jonathanportillo93/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
+        </a>
+        <a href="mailto:jonport93@gmail.com">Contact</a>
+      </footer>
+    </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    newTask: state.newTask,
-  };
-};
+const mapStateToProps = (state) => ({
+  boardsReady: state.activeBoard !== null,
+});
 
-export default connect(mapStateToProps, {
-  createNewTask,
-  handle_change_newtask,
-})(Dashboard);
+export default connect(mapStateToProps, { logout, getBoards })(Dashboard);

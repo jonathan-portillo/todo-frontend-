@@ -29,6 +29,19 @@ export const DELETE_TASK = "DELETE_TASK";
 export const DELETE_TASK_SUCCESS = "DELETE_TASK_SUCCESS";
 export const DELETE_TASK_FAIL = "DELETE_TASK_FAIL";
 
+export const FETCH_TRASH_SUCCESS = "FETCH_TRASH_SUCCESS";
+export const RESTORE_TASK_SUCCESS = "RESTORE_TASK_SUCCESS";
+export const DELETE_FOREVER_SUCCESS = "DELETE_FOREVER_SUCCESS";
+
+export const SET_POSITION = "SET_POSITION";
+
+export const FETCH_BOARDS_SUCCESS = "FETCH_BOARDS_SUCCESS";
+export const ADD_BOARD_SUCCESS = "ADD_BOARD_SUCCESS";
+export const RENAME_BOARD_SUCCESS = "RENAME_BOARD_SUCCESS";
+export const DELETE_BOARD_SUCCESS = "DELETE_BOARD_SUCCESS";
+export const SET_ACTIVE_BOARD = "SET_ACTIVE_BOARD";
+export const MOVE_TASK_SUCCESS = "MOVE_TASK_SUCCESS";
+
 export const FETCH_TASKS = "FETCH_TASKS";
 export const FETCH_TASKS_SUCCESS = "FETCH_TASKS_SUCCESS";
 export const FETCH_TASKS_FAIL = "FETCH_TASKS_FAIL";
@@ -58,10 +71,23 @@ export const ENABLE_DELETE_FAIL = "ENABLE_DELETE_FAIL";
 export const ENABLE_ANY_TITLE_EDITING = "ENABLE_ANY_TITLE_EDITING";
 export const DISABLE_ANY_TITLE_EDITING = "DISABLE_ANY_TITLE_EDITING";
 
+// Turn a failed auth request into { ok: false, message, field } for the forms.
+const authError = (err, fallback) => {
+  if (!err.response) {
+    return {
+      ok: false,
+      field: "form",
+      message: "Can't reach the server. Please try again in a moment.",
+    };
+  }
+  const data = err.response.data || {};
+  return { ok: false, field: data.field || "form", message: data.message || fallback };
+};
+
 //SIGN UP
 export const createUser = (newUser) => (dispatch) => {
   dispatch({ type: ADD_NEW_USER });
-  axiosWithAuth()
+  return axiosWithAuth()
     .post("/auth/register", newUser)
     .then((res) => {
       dispatch({
@@ -70,31 +96,31 @@ export const createUser = (newUser) => (dispatch) => {
       });
       localStorage.setItem("id", res.data.id);
       localStorage.setItem("token", res.data.token);
+      return { ok: true };
     })
     .catch((err) => {
-      dispatch({
-        type: ADD_NEW_USER_FAIL,
-        payload: "Sign Up Failed try again!",
-      });
+      const error = authError(err, "Sign up failed. Please try again.");
+      dispatch({ type: ADD_NEW_USER_FAIL, payload: error.message });
+      return error;
     });
 };
 
 //LOGIN
 export const logUserIn = (cred) => (dispatch) => {
   dispatch({ type: LOGIN });
-  axiosWithAuth()
+  return axiosWithAuth()
     .post("/auth/login", cred)
     .then((res) => {
       dispatch({ type: LOGIN_SUCCESS, payload: res.data });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("id", res.data.id);
+      return { ok: true };
     })
     .catch((err) => {
-      dispatch({
-        type: LOGIN_FAIL,
-        payload: "Credentials are wrong or do not exist",
-      });
+      const error = authError(err, "Sign in failed. Please try again.");
+      dispatch({ type: LOGIN_FAIL, payload: error.message });
+      return error;
     });
 };
 
@@ -118,13 +144,14 @@ export const logout = () => (dispatch) => {
 
 export const createNewTask = (task) => (dispatch) => {
   dispatch({ type: NEW_TASK });
-  axiosWithAuth()
+  return axiosWithAuth()
     .post(`/title/user/${localStorage.getItem("id")}`, task)
     .then((res) => {
       dispatch({
         type: NEW_TASK_SUCCESS,
         payload: { ...res.data },
       });
+      return res.data;
     })
     .catch((err) => {
       dispatch({
@@ -132,6 +159,66 @@ export const createNewTask = (task) => (dispatch) => {
         payload: "Not sending title please help please",
       });
     });
+};
+
+//BOARDS (the tabs)
+export const getBoards = () => (dispatch) => {
+  return axiosWithAuth()
+    .get(`/boards/user/${localStorage.getItem("id")}`)
+    .then((res) => {
+      dispatch({ type: FETCH_BOARDS_SUCCESS, payload: res.data });
+    })
+    .catch(() => {});
+};
+
+export const setActiveBoard = (id) => {
+  localStorage.setItem("activeBoard", String(id));
+  return { type: SET_ACTIVE_BOARD, payload: id };
+};
+
+export const createBoard = (name) => (dispatch) => {
+  return axiosWithAuth()
+    .post(`/boards/user/${localStorage.getItem("id")}`, { name })
+    .then((res) => {
+      dispatch({ type: ADD_BOARD_SUCCESS, payload: res.data });
+      localStorage.setItem("activeBoard", String(res.data.id));
+      return res.data;
+    })
+    .catch(() => {});
+};
+
+export const renameBoard = (id, name) => (dispatch) => {
+  dispatch({ type: RENAME_BOARD_SUCCESS, payload: { id, name } });
+  return axiosWithAuth()
+    .put(`/boards/${id}`, { name })
+    .catch(() => {});
+};
+
+export const deleteBoard = (id) => (dispatch) => {
+  return axiosWithAuth()
+    .delete(`/boards/${id}`)
+    .then(() => {
+      dispatch({ type: DELETE_BOARD_SUCCESS, payload: { id } });
+    })
+    .catch(() => {});
+};
+
+//MOVE A LIST TO ANOTHER TAB
+export const moveTask = (id, boardId) => (dispatch) => {
+  dispatch({ type: MOVE_TASK_SUCCESS, payload: { id, board_id: boardId } });
+  return axiosWithAuth()
+    .put(`/title/${id}/board`, { board_id: boardId })
+    .catch(() => {});
+};
+
+//SAVE WHERE A CARD SITS ON THE CANVAS
+export const savePosition = (id, x, y) => (dispatch) => {
+  const pos_x = Math.round(x);
+  const pos_y = Math.max(0, Math.round(y));
+  dispatch({ type: SET_POSITION, payload: { id, pos_x, pos_y } });
+  return axiosWithAuth()
+    .put(`/title/${id}/position`, { pos_x, pos_y })
+    .catch(() => {});
 };
 
 //UPDATE TASK TITLE w/ TASK TITLE ID
@@ -154,11 +241,11 @@ export const updateTask = (id, task) => (dispatch) => {
     });
 };
 
-//DELETE A TASK
+//DELETE A TASK (moves it to the trash)
 
 export const deleteTask = (titleId) => (dispatch) => {
   dispatch({ type: DELETE_TASK });
-  axiosWithAuth()
+  return axiosWithAuth()
     .delete(`/title/${titleId}`)
     .then((res) => {
       dispatch({ type: DELETE_TASK_SUCCESS, payload: { taskId: titleId } });
@@ -166,6 +253,36 @@ export const deleteTask = (titleId) => (dispatch) => {
     .catch((err) => {
       dispatch({ type: DELETE_TASK_FAIL, payload: err.response.data });
     });
+};
+
+//GET THE TRASHED TASKS
+export const getTrash = () => (dispatch) => {
+  return axiosWithAuth()
+    .get(`title/user/${localStorage.getItem("id")}/trash`)
+    .then((res) => {
+      dispatch({ type: FETCH_TRASH_SUCCESS, payload: res.data });
+    })
+    .catch(() => {});
+};
+
+//RESTORE A TASK FROM THE TRASH
+export const restoreTask = (titleId) => (dispatch) => {
+  return axiosWithAuth()
+    .put(`/title/${titleId}/restore`)
+    .then((res) => {
+      dispatch({ type: RESTORE_TASK_SUCCESS, payload: res.data });
+    })
+    .catch(() => {});
+};
+
+//DELETE A TASK FOREVER
+export const deleteForever = (titleId) => (dispatch) => {
+  return axiosWithAuth()
+    .delete(`/title/${titleId}/permanent`)
+    .then(() => {
+      dispatch({ type: DELETE_FOREVER_SUCCESS, payload: { taskId: titleId } });
+    })
+    .catch(() => {});
 };
 
 //GET A LIST OF USER TASKS
@@ -187,13 +304,14 @@ export const getTasks = (task) => (dispatch) => {
 //CREATE A NOTE ATTACHED TO TASK
 export const createNewNote = (id, notes) => (dispatch) => {
   dispatch({ type: NEW_NOTE_DESCRIPTION });
-  axiosWithAuth()
+  return axiosWithAuth()
     .post(`/todoList/${id}/title`, notes)
     .then((res) => {
       dispatch({
         type: NEW_NOTE_DESCRIPTION_SUCCESS,
         payload: res.data,
       });
+      return res.data;
     })
     .catch((err) => {
       dispatch({

@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 import Textfield from "@mui/material/TextField";
 import { connect } from "react-redux";
 import { handle_change_login, logUserIn } from "../../actions/todoActions";
-import Paper from "@mui/material/Paper";
+import AuthLayout from "./authlayout";
 import * as yup from "yup";
 
 const Login = (props) => {
   const [disable, setDisable] = useState(true);
+  const [error, setError] = useState(null); // { message, field }
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await props.logUserIn(props.loginForm);
+    setError(null);
+    setSubmitting(true);
+    const result = await props.logUserIn(props.loginForm);
+    setSubmitting(false);
 
-    navigate("/tasknotes");
+    if (result.ok) navigate("/tasknotes");
+    else setError(result);
+  };
+
+  // clear the message as soon as the user starts fixing it
+  const handleChange = (e) => {
+    setError(null);
+    props.handle_change_login(e);
   };
 
   const formSchema = yup.object().shape({
@@ -32,52 +43,49 @@ const Login = (props) => {
   }, [props.loginForm]);
 
   return (
-    <>
-      <Paper className="loginbox">
-        <header className="logininfo">
-          <p>Enter your User Credentials </p>
-          <br />
-        </header>
-        <form className="loggingin" onSubmit={handleSubmit}>
-          <label htmlFor="username">
-            <Textfield
-              className="textfield"
-              id="outlined"
-              label="Enter your username"
-              fullWidth
-              variant="outlined"
-              type="text"
-              name="username"
-              value={props.loginForm.username}
-              onChange={props.handle_change_login}
-            />
-          </label>
-          <br />
-
-          <label htmlFor="password">
-            <Textfield
-              className="textfield"
-              id="password"
-              label="Enter your password"
-              fullWidth
-              variant="outlined"
-              type="password"
-              name="password"
-              value={props.loginForm.password}
-              onChange={props.handle_change_login}
-            />
-          </label>
-          <br />
-          <Button disabled={disable} variant="contained" type="submit">
-            Sign in
-          </Button>
-          <br />
-          <Link to="/signup">
-            <p className="linktosignup">Not a user? Sign Up Here!</p>
-          </Link>
-        </form>
-      </Paper>
-    </>
+    <AuthLayout title="Welcome back" subtitle="Sign in to your account.">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <Textfield
+          id="username"
+          label="Username"
+          fullWidth
+          variant="outlined"
+          type="text"
+          name="username"
+          error={error?.field === "username"}
+          helperText={error?.field === "username" ? error.message : ""}
+          value={props.loginForm.username}
+          onChange={handleChange}
+        />
+        <Textfield
+          id="password"
+          label="Password"
+          fullWidth
+          variant="outlined"
+          type="password"
+          name="password"
+          error={error?.field === "password"}
+          helperText={error?.field === "password" ? error.message : ""}
+          value={props.loginForm.password}
+          onChange={handleChange}
+        />
+        {error?.field === "form" && (
+          <p className="auth-error" role="alert">
+            {error.message}
+          </p>
+        )}
+        <button
+          className="auth-submit"
+          disabled={disable || submitting}
+          type="submit"
+        >
+          {submitting ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+      <p className="auth-switch">
+        Not a user? <Link to="/signup">Sign up</Link>
+      </p>
+    </AuthLayout>
   );
 };
 

@@ -36,6 +36,16 @@ import {
   ENABLE_DELETE_FAIL,
   ENABLE_ANY_TITLE_EDITING,
   DISABLE_ANY_TITLE_EDITING,
+  FETCH_TRASH_SUCCESS,
+  RESTORE_TASK_SUCCESS,
+  DELETE_FOREVER_SUCCESS,
+  SET_POSITION,
+  FETCH_BOARDS_SUCCESS,
+  ADD_BOARD_SUCCESS,
+  RENAME_BOARD_SUCCESS,
+  DELETE_BOARD_SUCCESS,
+  SET_ACTIVE_BOARD,
+  MOVE_TASK_SUCCESS,
 } from "../actions/todoActions";
 
 const initialState = {
@@ -52,6 +62,9 @@ const initialState = {
     todo_title: "",
   },
   allTasks: [],
+  trashTasks: [],
+  boards: [],
+  activeBoard: null,
   newNoteDescription: {
     todo_list: "",
   },
@@ -185,6 +198,76 @@ export const todoReducer = (state = initialState, action) => {
       return {
         ...state,
         allUserNotes: [...state.allUserNotes, ...newNotes],
+      };
+    case FETCH_BOARDS_SUCCESS: {
+      const saved = Number(localStorage.getItem("activeBoard"));
+      const active = action.payload.some((b) => b.id === saved)
+        ? saved
+        : action.payload[0]?.id ?? null;
+      return { ...state, boards: action.payload, activeBoard: active };
+    }
+    case ADD_BOARD_SUCCESS:
+      return {
+        ...state,
+        boards: [...state.boards, action.payload],
+        activeBoard: action.payload.id,
+      };
+    case RENAME_BOARD_SUCCESS:
+      return {
+        ...state,
+        boards: state.boards.map((b) =>
+          b.id === action.payload.id ? { ...b, name: action.payload.name } : b
+        ),
+      };
+    case DELETE_BOARD_SUCCESS: {
+      const boards = state.boards.filter((b) => b.id !== action.payload.id);
+      return {
+        ...state,
+        boards,
+        allTasks: state.allTasks.filter((t) => t.board_id !== action.payload.id),
+        activeBoard:
+          state.activeBoard === action.payload.id
+            ? boards[0]?.id ?? null
+            : state.activeBoard,
+      };
+    }
+    case MOVE_TASK_SUCCESS:
+      return {
+        ...state,
+        allTasks: state.allTasks.map((t) =>
+          t.id === action.payload.id
+            ? { ...t, board_id: action.payload.board_id, pos_x: null, pos_y: null }
+            : t
+        ),
+      };
+    case SET_ACTIVE_BOARD:
+      return { ...state, activeBoard: action.payload };
+    case SET_POSITION:
+      return {
+        ...state,
+        allTasks: state.allTasks.map((t) =>
+          t.id === action.payload.id
+            ? { ...t, pos_x: action.payload.pos_x, pos_y: action.payload.pos_y }
+            : t
+        ),
+      };
+    case FETCH_TRASH_SUCCESS:
+      return { ...state, trashTasks: action.payload };
+    case RESTORE_TASK_SUCCESS:
+      return {
+        ...state,
+        trashTasks: state.trashTasks.filter((t) => t.id !== action.payload.id),
+        allTasks: [
+          ...state.allTasks.filter((t) => t.id !== action.payload.id),
+          action.payload,
+        ].sort((a, b) => a.id - b.id),
+      };
+    case DELETE_FOREVER_SUCCESS:
+      return {
+        ...state,
+        trashTasks: state.trashTasks.filter(
+          (t) => t.id !== action.payload.taskId
+        ),
       };
     case DELETE_TASK_SUCCESS:
       const deletedTaskId = action.payload.taskId;

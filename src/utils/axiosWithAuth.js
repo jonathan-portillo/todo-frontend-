@@ -7,6 +7,7 @@ export const axiosWithAuth = () => {
     headers: {
       Authorization: token,
     },
-    baseURL: "https://jonstodo.herokuapp.com/",
+    // set REACT_APP_API_URL for a deployed build; local development uses port 4000
+    baseURL: process.env.REACT_APP_API_URL || "http://localhost:4000/",
   });
 };

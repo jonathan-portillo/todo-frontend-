@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createUser, handle_change_signup } from "../../actions/todoActions";
 import { connect } from "react-redux";
-import Button from "@mui/material/Button";
 import Textfield from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Nav from "../standardcomps/nav";
+import AuthLayout from "./authlayout";
 import * as yup from "yup";
 
 const SignUp = (props) => {
   const [disable, setDisable] = useState(true);
+  const [error, setError] = useState(null); // { message, field }
+  const [submitting, setSubmitting] = useState(false);
 
   let navigate = useNavigate();
 
@@ -26,58 +26,65 @@ const SignUp = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await props.createUser(props.signUpForm);
+    setError(null);
+    setSubmitting(true);
+    const result = await props.createUser(props.signUpForm);
+    setSubmitting(false);
 
-    navigate("/tasknotes");
+    if (result.ok) navigate("/tasknotes");
+    else setError(result);
+  };
+
+  // clear the message as soon as the user starts fixing it
+  const handleChange = (e) => {
+    setError(null);
+    props.handle_change_signup(e);
   };
 
   return (
-    <>
-      <Nav />
-      <Paper className="signupbox">
-        <header className="signupinfo">
-          <p>Sign Up Here!!</p>
-          <br />
-        </header>
-        <form className="signup" onSubmit={handleSubmit}>
-          <label htmlFor="username">
-            <Textfield
-              className="textfield"
-              id="outlined"
-              label="Create a username"
-              fullWidth
-              variant="outlined"
-              type="text"
-              name="username"
-              value={props.signUpForm.username}
-              onChange={props.handle_change_signup}
-            />
-          </label>
-          <br />
-          <label htmlFor="password">
-            <Textfield
-              className="textfield"
-              id="outlined"
-              label="Create a password"
-              fullWidth
-              variant="outlined"
-              type="password"
-              name="password"
-              value={props.signUpForm.password}
-              onChange={props.handle_change_signup}
-            />
-          </label>
-          <br />
-          <Button disabled={disable} variant="contained" type="submit">
-            Sign up!
-          </Button>
-          <br />
-          <Link to="/login">
-            <p className="linktologin">Already a user? Log in here!</p>
-          </Link>
-        </form>
-      </Paper>
-    </>
+    <AuthLayout title="Create your account" subtitle="Get started in seconds.">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <Textfield
+          id="username"
+          label="Username"
+          fullWidth
+          variant="outlined"
+          type="text"
+          name="username"
+          error={error?.field === "username"}
+          helperText={error?.field === "username" ? error.message : ""}
+          value={props.signUpForm.username}
+          onChange={handleChange}
+        />
+        <Textfield
+          id="password"
+          label="Password"
+          fullWidth
+          variant="outlined"
+          type="password"
+          name="password"
+          error={error?.field === "password"}
+          helperText={error?.field === "password" ? error.message : ""}
+          value={props.signUpForm.password}
+          onChange={handleChange}
+        />
+        {error?.field === "form" && (
+          <p className="auth-error" role="alert">
+            {error.message}
+          </p>
+        )}
+        <button
+          className="auth-submit"
+          disabled={disable || submitting}
+          type="submit"
+        >
+          {submitting ? "Creating account..." : "Sign up"}
+        </button>
+      </form>
+      <p className="auth-switch">
+        Already a user? <Link to="/login">Sign in</Link>
+      </p>
+    </AuthLayout>
   );
 };
 

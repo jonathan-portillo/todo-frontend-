@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-  deleteTask,
   updateTask,
   setEditing,
   editTitle,
@@ -12,18 +11,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import IconButton from "@mui/material/IconButton";
 import SaveIcon from "@mui/icons-material/Save";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const TaskTitle = (props) => {
   const {
     task,
-    deleteTask,
     updateTask,
     isEditing,
     editedTitle,
     setEditing,
     editTitle,
     enableAnyTitleEditing,
-    enableDelete,
   } = props;
 
   const handleEditClick = () => {
@@ -36,8 +34,6 @@ const TaskTitle = (props) => {
 
   const handleSaveClick = async (e) => {
     e.preventDefault();
-    console.log("Task ID to be updated:", task.id);
-    console.log("Updated Title:", editedTitle);
 
     await updateTask(task.id, { todo_title: editedTitle });
     setEditing(task.id, false);
@@ -46,21 +42,36 @@ const TaskTitle = (props) => {
 
   return (
     <>
-      <input type="checkbox" className="toggle" id={`task_${task.id}`} />
-      <div className="tasktitlebox">
+      <input type="checkbox" className="dash-toggle" id={`task_${task.id}`} />
+      <div className="dash-card-head">
         {isEditing ? (
           <input
             type="text"
+            className="dash-title-input"
             value={editedTitle}
             onChange={(e) => editTitle(e.target.value)}
           />
         ) : (
-          <label className="tasktitle" htmlFor={`task_${task.id}`}>
+          <label className="dash-card-title" htmlFor={`task_${task.id}`}>
             {task.todo_title}
           </label>
         )}
-        <div className="buttonsss">
-          <div className="buttonscontainer">
+        <div className="dash-icons">
+          <IconButton
+            size="small"
+            onClick={props.onToggleCollapse}
+            aria-label={props.collapsed ? "expand list" : "collapse list"}
+            title={props.collapsed ? "Expand" : "Collapse"}
+          >
+            <ExpandMoreIcon
+              style={{
+                fontSize: 22,
+                transition: "transform 0.2s ease",
+                transform: props.collapsed ? "rotate(-90deg)" : "none",
+              }}
+            />
+          </IconButton>
+          <div className="dash-icons">
             {isEditing ? (
               <IconButton>
                 <SaveIcon style={{ fontSize: 20 }} onClick={handleSaveClick} />
@@ -81,14 +92,14 @@ const TaskTitle = (props) => {
                 )}
               </>
             )}
-            {enableDelete ? (
-              <IconButton>
-                <DeleteOutlineIcon
-                  style={{ fontSize: 20 }}
-                  onClick={() => deleteTask(task.id)}
-                />
-              </IconButton>
-            ) : null}
+            <IconButton
+              size="small"
+              aria-label="delete list"
+              title="Delete"
+              onClick={() => props.onDelete(task)}
+            >
+              <DeleteOutlineIcon style={{ fontSize: 20 }} />
+            </IconButton>
           </div>
         </div>
       </div>
@@ -102,12 +113,10 @@ const mapStateToProps = (state, ownProps) => {
     editedTitle: state.editedTitle,
     isEditing: state.isEditing[taskId] || false,
     isAnyTitleEditing: state.isAnytitleEditing,
-    enableDelete: state.enableDelete,
   };
 };
 
 export default connect(mapStateToProps, {
-  deleteTask,
   updateTask,
   setEditing,
   editTitle,
