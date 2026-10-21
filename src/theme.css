@@ -1,0 +1,68 @@
+/* Colors used across the app. Dark mode overrides them when <html data-theme="dark">. */
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-2: #333333;
+  --muted: #666666;
+  --faint: #aaaaaa;
+  --border: #ecece6;
+  --border-strong: #d6d6d0;
+  --line: #efefe9;
+  --accent-soft: #d9d3fb;
+  --tab-border: #e4e1fb;
+  --hover-bg: #f1effd;
+  --danger-bg: #fdecec;
+  --danger-border: #f3c4bf;
+  --danger-text: #c0392b;
+  --toast-bg: #1a1a1a;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1014;
+  --surface: #1a1b22;
+  --text: #ececf3;
+  --text-2: #d2d3de;
+  --muted: #a0a3b5;
+  --faint: #6c6f84;
+  --border: #2a2c38;
+  --border-strong: #3a3d4d;
+  --line: #2a2c38;
+  --accent-soft: #3d3680;
+  --tab-border: #38336e;
+  --hover-bg: #25233f;
+  --danger-bg: #3a1d1d;
+  --danger-border: #6b2d2a;
+  --danger-text: #ff8a80;
+  --toast-bg: #2f3140;
+}
+
+html[data-theme="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* sun / moon button */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  transform: rotate(15deg);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid #5b4cf0;
+  outline-offset: 2px;
+}

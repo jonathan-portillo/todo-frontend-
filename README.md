@@ -1,21 +1,96 @@
-## Welcome to my personal project Task Notes!!.
+# Task Note
 
-I am working on building out a simple todo application. I am using React as the main framework with Redux for statemangement. I am connecting to a backend I created which you can find here
-https://github.com/jonathan-portillo/todo-backend-/tree/main
-Link to the website is here https://task-notes-omega.vercel.app/
-Prior commits can also be found here https://github.com/jonathan-portillo/TODO
+A to-do app where every list is a card. Place cards anywhere on a board, resize them, group them into tabs, and tick items off. Built with React and Redux, talking to the [Task Note API](https://github.com/jonathan-portillo/todo-backend-).
 
-## HOW TO DEPLOY ON YOUR OWN LOCAL MACHINE
+Live site: https://task-notes-omega.vercel.app/
+Earlier commits: https://github.com/jonathan-portillo/TODO
 
-1. Clone repository. Run `git clone https://github.com/jonathan-portillo/todo-frontend-.git`
-2. Run `npm i` to update packages that need updating.
-3. In your terminal run npm start, this will open up `localhost:3000`
-4. You need to also clone the backend `https://github.com/jonathan-portillo/todo-backend-/tree/main`
-5. Repeat step 2 in the backend folder.
-6. Run `npm run server` in your terminal this well get the backend running for your application.
-7. Have fun!
+## Features
+
+- **Checklist cards.** Each card has a coloured header with its title and a ruled checklist underneath. Press Enter for a new line, tick an item to cross it off, and use the × on a line to remove it. Changes save automatically.
+- **A free-form board.** Drag a card by its header to put it anywhere in the window. Its position is saved. New cards open in the first free spot.
+- **Resizable cards.** Drag the bottom-right corner to make a card wider or taller. The size is saved.
+- **Tabs.** Group cards into tabs (for example Math and Science). Add, rename and delete tabs, and drag a card onto a tab to move it there.
+- **Collapse.** Fold a card down to just its title to free up space.
+- **Trash and undo.** Deleting a card moves it to the trash, with an Undo bar for a few seconds. The Trash page lets you restore a card or delete it forever.
+- **Sign up and sign in** with inline errors (username taken, unknown username, wrong password).
+- **Light and dark mode.** Follows your system setting the first time, then remembers your choice.
+- **Landing page** with a typed headline and sample cards you can tick.
+
+## Running it locally
+
+You need Node and the API running.
+
+1. Clone this repo: `git clone https://github.com/jonathan-portillo/todo-frontend-.git`
+2. Install packages: `npm install`
+3. Start the app: `npm start` (opens http://localhost:3000)
+4. In another terminal, set up the API from https://github.com/jonathan-portillo/todo-backend- (its README has the steps). Run it on **port 4000**, since that is where the app looks by default.
+
+### Pointing at a different API
+
+The API address is read from `REACT_APP_API_URL` and falls back to `http://localhost:4000/`.
+
+```
+# local
+npm start
+
+# a deployed build (include the trailing slash)
+REACT_APP_API_URL=https://your-api.example.com/ npm run build
+```
+
+### Scripts
+
+| Command         | What it does                         |
+| :-------------- | :----------------------------------- |
+| `npm start`     | Development server on port 3000      |
+| `npm run build` | Production build into `build/`       |
+| `npm test`      | Runs the tests (Create React App)    |
+
+## How it is organised
+
+```
+src/
+  actions/todoActions.js     all API calls and Redux actions
+  reducers/todoReducer.js    the single Redux store
+  components/
+    auth/                    sign in, sign up, shared layout
+    dashboard/               page, tabs, header buttons, styles
+    task/                    cards, the new-card form, the trash view
+    notes/                   the checklist editor
+    standardcomps/           landing page, theme toggle
+  utils/
+    canvas.js                card placement and overlap logic
+    checklist.js             checklist text format
+    tints.js                 card header colours
+    theme.js                 light / dark mode
+  theme.css                  colour variables for both themes
+```
+
+A few things that are not obvious from the code:
+
+- **Checklists are plain text.** Each card's list is stored as one note, one item per line: `[ ] open item` or `[x] finished item`. Lines from older notes without those markers still load as unchecked items.
+- **Card colour is stored in the browser.** The colour you pick for a new card and whether a card is collapsed are kept in `localStorage`, so they do not follow you to another browser or device. Position, size, tabs and the trash are stored by the API.
+- **The board is a canvas.** Cards you have not moved yet flow into free space. The first time you move a card, the others are pinned where they are so nothing jumps.
+- **Theme.** Colours are CSS variables in `src/theme.css`. A small script in `public/index.html` sets the saved theme before the page paints so it does not flash.
 
 ## Status
+
+The app is feature complete for now. Recent work:
+
+- Redesigned the landing, sign in, sign up and dashboard pages.
+- Added the free-form board, resizable cards, tabs, trash with undo, and dark mode.
+- Added clear sign in and sign up errors.
+
+Not done yet:
+
+- Moving a card between tabs from a menu (dragging works).
+- Reordering tabs.
+- Touch support for dragging and resizing has not been tried.
+- The About page still has its original styling.
+
+## Development log
+
+Older notes from building the app, kept as written. Newest first.
 
 - Planning on updating a few functions of the app to allow for better user interactivity. Want to ensure there is validation when signing in, some type of way to ensure that information submitted was wrong or succesful.
 - Fully deployed looking to see if there are any leftover bugs

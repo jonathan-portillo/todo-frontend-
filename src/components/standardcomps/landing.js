@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
+import ThemeToggle from "./themetoggle";
 import "./landing.css";
 
 // Sample cards that look like the ones inside the app. The checkboxes work.
@@ -115,9 +116,12 @@ const Landing = (props) => {
     <div className="lp">
       <header className="lp-header">
         <span className="lp-brand">Task Note</span>
-        <button className="lp-link" onClick={() => navigate("/login")}>
-          Sign in
-        </button>
+        <div className="lp-header-tools">
+          <ThemeToggle />
+          <button className="lp-link" onClick={() => navigate("/login")}>
+            Sign in
+          </button>
+        </div>
       </header>
 
       <main className="lp-hero">

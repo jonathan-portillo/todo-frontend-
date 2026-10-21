@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../standardcomps/themetoggle";
 import "./auth.css";
 
 const AuthLayout = ({ title, subtitle, children }) => {
@@ -11,6 +12,7 @@ const AuthLayout = ({ title, subtitle, children }) => {
         <button className="auth-brand" onClick={() => navigate("/")}>
           Task Note
         </button>
+        <ThemeToggle />
       </header>
       <main className="auth-main">
         <div className="auth-card">

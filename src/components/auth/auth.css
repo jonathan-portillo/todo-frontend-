@@ -3,17 +3,20 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #fafaf7;
-  color: #1a1a1a;
+  background: var(--bg);
+  color: var(--text);
   text-align: left;
 }
 
 body:has(.auth) {
-  background: #fafaf7;
+  background: var(--bg);
 }
 
 .auth-header {
   padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .auth-brand {
@@ -38,8 +41,8 @@ body:has(.auth) {
 .auth-card {
   width: 100%;
   max-width: 24rem;
-  background: #fff;
-  border: 1px solid #ecece6;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 2rem;
 }
@@ -52,7 +55,7 @@ body:has(.auth) {
 }
 
 .auth-sub {
-  color: #666;
+  color: var(--muted);
   margin-bottom: 1.5rem;
 }
 
@@ -64,7 +67,7 @@ body:has(.auth) {
 
 .auth-form .MuiOutlinedInput-root {
   border-radius: 0.5rem;
-  background: #fff;
+  background: var(--surface);
 }
 
 .auth-form .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
@@ -92,7 +95,7 @@ body:has(.auth) {
 }
 
 .auth-submit:disabled {
-  background: #d6d6d0;
+  background: var(--border-strong);
   cursor: not-allowed;
 }
 
@@ -100,7 +103,7 @@ body:has(.auth) {
   margin-top: 1.25rem;
   text-align: center;
   font-size: 0.95rem;
-  color: #666;
+  color: var(--muted);
 }
 
 .auth-switch a {
@@ -113,8 +116,8 @@ body:has(.auth) {
 }
 
 .auth-error {
-  background: #fdecec;
-  color: #b3261e;
+  background: var(--danger-bg);
+  color: var(--danger-text);
   border-radius: 0.5rem;
   padding: 0.65rem 0.85rem;
   font-size: 0.9rem;
@@ -122,4 +125,36 @@ body:has(.auth) {
 
 .auth-form .MuiFormHelperText-root.Mui-error {
   margin-left: 0.25rem;
+}
+
+/* make the MUI text fields follow the theme */
+.auth-form .MuiInputBase-input {
+  color: var(--text);
+}
+
+.auth-form .MuiInputLabel-root {
+  color: var(--muted);
+}
+
+.auth-form .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-strong);
+}
+
+.auth-form .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--muted);
+}
+
+.auth-form .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--accent);
+}
+
+.auth-form .MuiInputLabel-root.Mui-error,
+.auth-form .Mui-error .MuiOutlinedInput-notchedOutline {
+  color: var(--danger-text);
+  border-color: var(--danger-text);
+}
+
+.auth-form .MuiInputBase-input:-webkit-autofill {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0 100px var(--surface) inset;
 }

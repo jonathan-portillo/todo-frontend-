@@ -41,6 +41,7 @@ export const RENAME_BOARD_SUCCESS = "RENAME_BOARD_SUCCESS";
 export const DELETE_BOARD_SUCCESS = "DELETE_BOARD_SUCCESS";
 export const SET_ACTIVE_BOARD = "SET_ACTIVE_BOARD";
 export const MOVE_TASK_SUCCESS = "MOVE_TASK_SUCCESS";
+export const SET_SIZE = "SET_SIZE";
 
 export const FETCH_TASKS = "FETCH_TASKS";
 export const FETCH_TASKS_SUCCESS = "FETCH_TASKS_SUCCESS";
@@ -200,6 +201,16 @@ export const deleteBoard = (id) => (dispatch) => {
     .then(() => {
       dispatch({ type: DELETE_BOARD_SUCCESS, payload: { id } });
     })
+    .catch(() => {});
+};
+
+//SAVE HOW BIG A CARD IS
+export const saveSize = (id, width, height) => (dispatch) => {
+  const w = Math.round(width);
+  const h = Math.round(height);
+  dispatch({ type: SET_SIZE, payload: { id, width: w, height: h } });
+  return axiosWithAuth()
+    .put(`/title/${id}/size`, { width: w, height: h })
     .catch(() => {});
 };
 

@@ -3,8 +3,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #fafaf7;
-  color: #1a1a1a;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .lp-header {
@@ -23,12 +23,12 @@
   background: none;
   border: 0;
   font: inherit;
-  color: #555;
+  color: var(--muted);
   cursor: pointer;
 }
 
 .lp-link:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .lp-hero {
@@ -85,7 +85,7 @@
 
 .lp-sub {
   font-size: 1.15rem;
-  color: #666;
+  color: var(--muted);
   max-width: 30rem;
   line-height: 1.5;
   margin-bottom: 2rem;
@@ -121,12 +121,12 @@
 
 .lp-btn-outline {
   background: transparent;
-  color: #1a1a1a;
-  border-color: #d6d6d0;
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 .lp-btn-outline:hover {
-  background: #fff;
+  background: var(--surface);
 }
 
 .lp-features {
@@ -143,7 +143,7 @@
 
 /* sample cards, styled like the cards in the dashboard */
 .lp-card {
-  background: #fff;
+  background: var(--surface);
   border-radius: 1rem;
   overflow: hidden;
   text-align: left;
@@ -164,7 +164,7 @@
   align-items: center;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 .lp-card-body {
@@ -176,15 +176,15 @@
   align-items: flex-start;
   gap: 0.7rem;
   padding: 0.3rem 0;
-  border-bottom: 1px solid #efefe9;
+  border-bottom: 1px solid var(--line);
   font-size: 0.98rem;
   line-height: 1.55;
-  color: #333;
+  color: var(--text-2);
   cursor: pointer;
 }
 
 .lp-item.done {
-  color: #aaa;
+  color: var(--faint);
   text-decoration: line-through;
 }
 
@@ -194,9 +194,9 @@
   width: 1.1rem;
   height: 1.1rem;
   margin: 0.3rem 0 0;
-  border: 1.5px solid #c9c9c1;
+  border: 1.5px solid var(--border-strong);
   border-radius: 50%;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   display: grid;
   place-content: center;
@@ -230,11 +230,11 @@
 }
 
 .lp-footer a {
-  color: #888;
+  color: var(--muted);
 }
 
 .lp-footer a:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 @media (max-width: 40rem) {
@@ -245,5 +245,15 @@
 
 /* match the page background to the landing page */
 body:has(.lp) {
-  background: #fafaf7;
+  background: var(--bg);
+}
+
+html[data-theme="dark"] .lp-card-head {
+  background: color-mix(in srgb, var(--tint) 42%, var(--surface));
+}
+
+.lp-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }

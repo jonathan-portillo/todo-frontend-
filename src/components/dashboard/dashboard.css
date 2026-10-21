@@ -3,13 +3,13 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #fafaf7;
-  color: #1a1a1a;
+  background: var(--bg);
+  color: var(--text);
   text-align: left;
 }
 
 body:has(.dash) {
-  background: #fafaf7;
+  background: var(--bg);
 }
 
 .dash button {
@@ -33,12 +33,12 @@ body:has(.dash) {
   background: none;
   border: 0;
   font-size: 1rem;
-  color: #555;
+  color: var(--muted);
   cursor: pointer;
 }
 
 .dash-link:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 /* toolbar */
@@ -77,7 +77,7 @@ body:has(.dash) {
   gap: 0.2rem;
   padding: 0.5rem 0.9rem;
   border-radius: 0.6rem 0.6rem 0 0;
-  color: #777;
+  color: var(--muted);
   font-weight: 600;
   font-size: 0.95rem;
   border: 1px solid transparent;
@@ -87,7 +87,7 @@ body:has(.dash) {
 
 .dash-tab:hover {
   background: rgba(91, 76, 240, 0.06);
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 /* a card is being dragged over this tab */
@@ -100,9 +100,9 @@ body:has(.dash) {
 }
 
 .dash-tab.active {
-  background: #fff;
+  background: var(--surface);
   color: var(--accent);
-  border-color: #e4e1fb;
+  border-color: var(--tab-border);
   box-shadow: 0 -4px 12px -8px rgba(91, 76, 240, 0.4);
 }
 
@@ -121,7 +121,7 @@ body:has(.dash) {
 
 .dash-tab-input {
   font: inherit;
-  color: #1a1a1a;
+  color: var(--text);
   border: 0;
   outline: none;
   background: transparent;
@@ -143,12 +143,12 @@ body:has(.dash) {
   border: 0;
   border-radius: 50%;
   background: none;
-  color: #aaa;
+  color: var(--faint);
   cursor: pointer;
 }
 
 .dash-tab-tools button:hover {
-  background: #f1effd;
+  background: var(--hover-bg);
   color: var(--accent);
 }
 
@@ -158,10 +158,10 @@ body:has(.dash) {
   width: 2rem;
   height: 2rem;
   margin: 0 0 0.2rem 0.3rem;
-  border: 1px dashed #c9c9c1;
+  border: 1px dashed var(--border-strong);
   border-radius: 50%;
   background: none;
-  color: #888;
+  color: var(--muted);
   cursor: pointer;
 }
 
@@ -178,9 +178,9 @@ body:has(.dash) {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    #d9d3fb 12%,
+    var(--accent-soft) 12%,
     var(--accent) 50%,
-    #d9d3fb 88%,
+    var(--accent-soft) 88%,
     transparent 100%
   );
   box-shadow: 0 4px 14px -2px rgba(91, 76, 240, 0.35);
@@ -206,9 +206,9 @@ body:has(.dash) {
   gap: 0.4rem;
   padding: 0.5rem 0.95rem 0.5rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid #d6d6d0;
-  background: #fff;
-  color: #1a1a1a;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -273,18 +273,18 @@ body:has(.dash) {
 
 .dash-btn-outline {
   background: transparent;
-  color: #1a1a1a;
-  border-color: #d6d6d0;
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 .dash-btn-outline:hover {
-  background: #fff;
+  background: var(--surface);
 }
 
 .dash-btn-active {
-  background: #fdecec;
-  color: #c0392b;
-  border-color: #f3c4bf;
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: var(--danger-border);
 }
 
 /* grid + cards */
@@ -297,12 +297,12 @@ body:has(.dash) {
 
 .dash-empty {
   text-align: center;
-  color: #888;
+  color: var(--muted);
   padding: 4rem 0;
 }
 
 .dash-card {
-  background: #fff;
+  background: var(--surface);
   border: 0;
   border-radius: 1rem;
   padding: 0;
@@ -344,7 +344,7 @@ body:has(.dash) {
   min-width: 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -375,7 +375,7 @@ body:has(.dash) {
 }
 
 .dash-title-input::placeholder {
-  color: #b5b5ad;
+  color: var(--faint);
   font-weight: 500;
 }
 
@@ -396,12 +396,12 @@ body:has(.dash) {
   align-items: flex-start;
   gap: 0.7rem;
   padding: 0.3rem 0;
-  border-bottom: 1px solid #efefe9;
+  border-bottom: 1px solid var(--line);
   transition: border-color 0.15s ease;
 }
 
 .dash-item:focus-within {
-  border-bottom-color: #cfc8fb;
+  border-bottom-color: var(--accent-soft);
 }
 
 .dash-check {
@@ -410,9 +410,9 @@ body:has(.dash) {
   width: 1.1rem;
   height: 1.1rem;
   margin: 0.3rem 0 0;
-  border: 1.5px solid #c9c9c1;
+  border: 1.5px solid var(--border-strong);
   border-radius: 50%;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   display: grid;
   place-content: center;
@@ -445,7 +445,7 @@ body:has(.dash) {
   font: inherit;
   font-size: 0.98rem;
   line-height: 1.55;
-  color: #333;
+  color: var(--text-2);
   padding: 0;
   border: 0;
   background: transparent;
@@ -453,7 +453,7 @@ body:has(.dash) {
 }
 
 .dash-item-text::placeholder {
-  color: #b5b5ad;
+  color: var(--faint);
 }
 
 .dash-item-remove {
@@ -464,7 +464,7 @@ body:has(.dash) {
   border: 0;
   border-radius: 50%;
   background: none;
-  color: #bbb;
+  color: var(--faint);
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
@@ -478,8 +478,8 @@ body:has(.dash) {
 }
 
 .dash-item-remove:hover {
-  background: #fdecec;
-  color: #c0392b;
+  background: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 @media (hover: none) {
@@ -489,7 +489,7 @@ body:has(.dash) {
 }
 
 .dash-item.done .dash-item-text {
-  color: #aaa;
+  color: var(--faint);
   text-decoration: line-through;
 }
 
@@ -520,11 +520,11 @@ body:has(.dash) {
 }
 
 .dash-footer a {
-  color: #888;
+  color: var(--muted);
 }
 
 .dash-footer a:hover {
-  color: #1a1a1a;
+  color: var(--text);
 }
 
 @media (max-width: 40rem) {
@@ -548,7 +548,7 @@ body:has(.dash) {
   align-items: center;
   gap: 1.25rem;
   padding: 0.75rem 1.1rem;
-  background: #1a1a1a;
+  background: var(--toast-bg);
   color: #fff;
   border-radius: 0.6rem;
   font-size: 0.95rem;
@@ -598,17 +598,17 @@ body:has(.dash) {
   flex: none;
   width: 1.1rem;
   height: 1.1rem;
-  border: 1.5px solid #e0e0d9;
+  border: 1.5px solid var(--border-strong);
   border-radius: 50%;
 }
 
 .dash-item.done .dash-trash-dot {
-  background: #d6d0fa;
-  border-color: #d6d0fa;
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
 }
 
 .dash-trash-empty {
-  color: #aaa;
+  color: var(--faint);
   font-size: 0.95rem;
 }
 
@@ -638,8 +638,8 @@ body:has(.dash) {
 }
 
 .dash-swatch.active {
-  border-color: #1a1a1a;
-  box-shadow: 0 0 0 2px #fff inset;
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--surface) inset;
 }
 
 /* independent columns, so cards below a collapsed card move up */
@@ -695,11 +695,60 @@ body:has(.dash) {
 /* grip on the new-task card: the title field fills the header, so this is the handle */
 .dash-grip {
   flex: none;
-  color: rgba(0, 0, 0, 0.35);
+  color: var(--faint);
   margin-right: 0.4rem;
   margin-left: -0.35rem;
 }
 
 .dash-card-draft .dash-card-head {
   cursor: grab;
+}
+
+/* dark mode: soften the pastel header bands and keep the icons readable */
+html[data-theme="dark"] .dash-card-head {
+  background: color-mix(in srgb, var(--tint, #e4defd) 42%, var(--surface));
+}
+
+.dash-card-head .MuiIconButton-root {
+  color: var(--muted);
+}
+
+.dash-card-head .MuiIconButton-root:hover {
+  color: var(--text);
+}
+
+.dash-card-head .MuiIconButton-root.Mui-disabled {
+  opacity: 0.4;
+}
+
+.dash-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* corner handle to resize a card */
+.dash-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  cursor: nwse-resize;
+  touch-action: none;
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+  background: linear-gradient(
+    135deg,
+    transparent 0 54%,
+    var(--faint) 54% 60%,
+    transparent 60% 72%,
+    var(--faint) 72% 78%,
+    transparent 78%
+  );
+}
+
+.dash-card:hover .dash-resize,
+.dash-resize:active {
+  opacity: 1;
 }

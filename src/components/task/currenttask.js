@@ -11,6 +11,7 @@ import {
   restoreTask,
   savePosition,
   moveTask,
+  saveSize,
 } from "../../actions/todoActions";
 import { connect } from "react-redux";
 import NoteDescription from "../notes/noteDescription";
@@ -26,6 +27,9 @@ import {
 
 const UNDO_MS = 6000;
 const WINDOW_EDGE = 8; // px kept clear at the window edges
+const MIN_W = 240;
+const MAX_W = 1200;
+const MIN_H = 120;
 const DRAG_THRESHOLD = 4; // px before a press counts as a drag
 
 // The other tab under the pointer, if any. Dropping a card on a tab moves it there.
@@ -53,6 +57,7 @@ const TaskCard = ({
   onDelete,
   onDrop,
   onMoveToBoard,
+  onResize,
   onRaise,
   onSize,
 }) => {
@@ -61,6 +66,8 @@ const TaskCard = ({
     () => localStorage.getItem(key) === "1"
   );
   const [drag, setDrag] = useState(null); // { x, y } while being dragged
+  const [resizing, setResizing] = useState(null); // { w, h } while being resized
+  const resizeStart = useRef(null);
   const cardRef = useRef(null);
   const start = useRef(null);
   const moved = useRef(false);
@@ -118,6 +125,36 @@ const TaskCard = ({
     setDrag(null);
   };
 
+  // drag the bottom-right corner to resize
+  const handleResizeDown = (e) => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    e.preventDefault();
+    onRaise(task.id);
+    const rect = cardRef.current.getBoundingClientRect();
+    resizeStart.current = { px: e.clientX, py: e.clientY, w: rect.width, h: rect.height };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setResizing({ w: rect.width, h: rect.height });
+  };
+
+  const handleResizeMove = (e) => {
+    const s = resizeStart.current;
+    if (!s) return;
+    // keep the card inside the window on the right
+    const maxW = Math.min(MAX_W, bounds.maxX + CARD_W - (drag ? drag.x : x));
+    setResizing({
+      w: Math.min(Math.max(s.w + e.clientX - s.px, MIN_W), Math.max(MIN_W, maxW)),
+      h: Math.max(s.h + e.clientY - s.py, MIN_H),
+    });
+  };
+
+  const handleResizeUp = () => {
+    if (!resizeStart.current) return;
+    resizeStart.current = null;
+    if (resizing) onResize(task.id, resizing.w, resizing.h);
+    setResizing(null);
+  };
+
   // a drag that started on the title shouldn't also expand/collapse it
   const handleClickCapture = (e) => {
     if (moved.current) {
@@ -138,6 +175,12 @@ const TaskCard = ({
         left: drag ? drag.x : x,
         top: drag ? drag.y : y,
         zIndex: raised ? 5 : undefined,
+        width: resizing ? resizing.w : task.width || undefined,
+        minHeight: collapsed
+          ? undefined
+          : resizing
+          ? resizing.h
+          : task.height || undefined,
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -157,12 +200,23 @@ const TaskCard = ({
           <NoteDescription id={task.id} title={task.todo_title} />
         </div>
       )}
+      {!collapsed && (
+        <div
+          className="dash-resize"
+          title="Drag to resize"
+          onPointerDown={handleResizeDown}
+          onPointerMove={handleResizeMove}
+          onPointerUp={handleResizeUp}
+          onPointerCancel={handleResizeUp}
+        />
+      )}
     </div>
   );
 };
 
 const CurrentTasks = (props) => {
-  const { deleteTask, restoreTask, savePosition, moveTask, activeBoard } = props;
+  const { deleteTask, restoreTask, savePosition, moveTask, saveSize, activeBoard } =
+    props;
   // only the lists on the current tab
   const allTasks = props.allTasks.filter(
     (t) => (t.board_id ?? props.firstBoard) === activeBoard
@@ -276,6 +330,7 @@ const CurrentTasks = (props) => {
             bounds={bounds}
             activeBoard={activeBoard}
             onMoveToBoard={moveTask}
+            onResize={saveSize}
             onDelete={handleDelete}
             onDrop={handleDrop}
             raised={raisedId === task.id}
@@ -317,4 +372,5 @@ export default connect(mapStateToProps, {
   restoreTask,
   savePosition,
   moveTask,
+  saveSize,
 })(CurrentTasks);

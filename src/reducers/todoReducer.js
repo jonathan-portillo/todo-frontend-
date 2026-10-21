@@ -46,6 +46,7 @@ import {
   DELETE_BOARD_SUCCESS,
   SET_ACTIVE_BOARD,
   MOVE_TASK_SUCCESS,
+  SET_SIZE,
 } from "../actions/todoActions";
 
 const initialState = {
@@ -231,6 +232,15 @@ export const todoReducer = (state = initialState, action) => {
             : state.activeBoard,
       };
     }
+    case SET_SIZE:
+      return {
+        ...state,
+        allTasks: state.allTasks.map((t) =>
+          t.id === action.payload.id
+            ? { ...t, width: action.payload.width, height: action.payload.height }
+            : t
+        ),
+      };
     case MOVE_TASK_SUCCESS:
       return {
         ...state,

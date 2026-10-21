@@ -9,7 +9,7 @@ const overlaps = (a, b) =>
   a.y + a.h + GAP > b.y;
 
 // First free spot reading left to right, top to bottom.
-export const findFreeSpot = (rects, height, canvasW) => {
+export const findFreeSpot = (rects, height, canvasW, width = CARD_W) => {
   const maxX = Math.max(0, canvasW - CARD_W);
   const cols = [];
   for (let x = 0; x <= maxX; x += CARD_W + GAP) cols.push(x);
@@ -17,7 +17,7 @@ export const findFreeSpot = (rects, height, canvasW) => {
 
   for (let y = 0; y < 20000; y += 20) {
     for (const x of cols) {
-      if (!rects.some((r) => overlaps({ x, y, w: CARD_W, h: height }, r))) {
+      if (!rects.some((r) => overlaps({ x, y, w: width, h: height }, r))) {
         return { x, y };
       }
     }
@@ -30,23 +30,24 @@ export const findFreeSpot = (rects, height, canvasW) => {
 export const computeLayout = (tasks, sizes, canvasW, bounds) => {
   const layout = {};
   const rects = [];
-  const height = (t) => sizes[t.id] || DEFAULT_H;
+  const height = (t) => sizes[t.id] || t.height || DEFAULT_H;
+  const width = (t) => t.width || CARD_W;
 
   tasks.forEach((t) => {
     if (t.pos_x != null && t.pos_y != null) {
       layout[t.id] = {
-        x: Math.min(Math.max(t.pos_x, bounds.minX), bounds.maxX),
+        x: Math.min(Math.max(t.pos_x, bounds.minX), bounds.maxX + CARD_W - width(t)),
         y: t.pos_y,
         pinned: true,
       };
-      rects.push({ ...layout[t.id], w: CARD_W, h: height(t) });
+      rects.push({ ...layout[t.id], w: width(t), h: height(t) });
     }
   });
   tasks.forEach((t) => {
     if (layout[t.id]) return;
-    const spot = findFreeSpot(rects, height(t), canvasW);
+    const spot = findFreeSpot(rects, height(t), canvasW, width(t));
     layout[t.id] = { ...spot, pinned: false };
-    rects.push({ ...spot, w: CARD_W, h: height(t) });
+    rects.push({ ...spot, w: width(t), h: height(t) });
   });
   return layout;
 };

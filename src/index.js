@@ -9,6 +9,7 @@ import { todoReducer } from "./reducers/todoReducer";
 import { setLoggedIn } from "./actions/todoActions";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
+import "./theme.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 

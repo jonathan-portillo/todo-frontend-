@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout, getBoards } from "../../actions/todoActions";
+import ThemeToggle from "../standardcomps/themetoggle";
 import BoardTabs from "./boardtabs";
 import CurrentTasks from "../task/currenttask";
 import TrashView from "../task/trashview";
@@ -28,9 +29,12 @@ const Dashboard = (props) => {
     <div className="dash">
       <header className="dash-header">
         <span className="dash-brand">Task Note</span>
-        <button className="dash-link" onClick={handleLogout}>
-          Log out
-        </button>
+        <div className="dash-header-tools">
+          <ThemeToggle />
+          <button className="dash-link" onClick={handleLogout}>
+            Log out
+          </button>
+        </div>
       </header>
 
       <main className="dash-main">
