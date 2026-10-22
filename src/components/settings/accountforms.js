@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import Textfield from "@mui/material/TextField";
 import { changeUsername, changePassword } from "../../actions/todoActions";
+import EmailSettings from "./emailsettings";
 
 const MIN_PASSWORD = 8;
 
@@ -127,6 +128,7 @@ const AccountForms = ({ changeUsername, changePassword }) => (
       }}
       onSubmit={(v) => changePassword(v.currentPassword, v.newPassword)}
     />
+    <EmailSettings />
   </div>
 );
 

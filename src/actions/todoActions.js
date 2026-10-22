@@ -144,6 +144,44 @@ export const changePassword = (currentPassword, newPassword) => () =>
     .then(() => ({ ok: true }))
     .catch((err) => authError(err, "Couldn't change your password."));
 
+//EMAIL + PASSWORD RESET
+
+export const requestPasswordReset = (identifier) => () =>
+  axiosWithAuth()
+    .post("/auth/forgot-password", { identifier })
+    .then((res) => ({ ok: true, message: res.data.message }))
+    .catch((err) => authError(err, "Couldn't send the reset link."));
+
+export const resetPassword = (token, newPassword) => () =>
+  axiosWithAuth()
+    .post("/auth/reset-password", { token, newPassword })
+    .then((res) => ({ ok: true, message: res.data.message }))
+    .catch((err) => authError(err, "Couldn't reset your password."));
+
+export const verifyEmail = (token) => () =>
+  axiosWithAuth()
+    .post("/auth/verify-email", { token })
+    .then((res) => ({ ok: true, email: res.data.email }))
+    .catch((err) => authError(err, "Couldn't confirm your email."));
+
+export const fetchAccount = () => () =>
+  axiosWithAuth()
+    .get("/auth/me")
+    .then((res) => ({ ok: true, ...res.data }))
+    .catch((err) => authError(err, "Couldn't load your account."));
+
+export const addEmail = (email, password) => () =>
+  axiosWithAuth()
+    .put("/auth/email", { email, password })
+    .then((res) => ({ ok: true, message: res.data.message }))
+    .catch((err) => authError(err, "Couldn't add that email."));
+
+export const removeEmail = (password) => () =>
+  axiosWithAuth()
+    .delete("/auth/email", { data: { password } })
+    .then(() => ({ ok: true }))
+    .catch((err) => authError(err, "Couldn't remove your email."));
+
 //APP CHECKS IF LOGGED IN EVEN ON REFRESH
 
 export const setLoggedIn = (isLoggedIn) => {

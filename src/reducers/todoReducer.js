@@ -53,6 +53,7 @@ const initialState = {
   signUpForm: {
     username: "",
     password: "",
+    email: "",
   },
   loginForm: {
     username: "",

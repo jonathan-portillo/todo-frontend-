@@ -68,6 +68,23 @@ const SignUp = (props) => {
           value={props.signUpForm.password}
           onChange={handleChange}
         />
+        <Textfield
+          id="email"
+          label="Email (optional)"
+          fullWidth
+          variant="outlined"
+          type="email"
+          name="email"
+          autoComplete="email"
+          error={error?.field === "email"}
+          helperText={
+            error?.field === "email"
+              ? error.message
+              : "Lets you reset your password if you forget it."
+          }
+          value={props.signUpForm.email}
+          onChange={handleChange}
+        />
         {error?.field === "form" && (
           <p className="auth-error" role="alert">
             {error.message}

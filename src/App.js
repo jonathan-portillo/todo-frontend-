@@ -9,6 +9,9 @@ import About from "./components/standardcomps/about";
 import Dashboard from "./components/dashboard/dashboard";
 import Settings from "./components/settings/settings";
 import Contact from "./components/contact/contact";
+import ForgotPassword from "./components/auth/forgotpassword";
+import ResetPassword from "./components/auth/resetpassword";
+import VerifyEmail from "./components/auth/verifyemail";
 import LoginPage from "./components/auth/loginpage";
 
 function App() {
@@ -35,6 +38,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route
           path="/"
           element={
