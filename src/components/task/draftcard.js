@@ -109,6 +109,7 @@ const DraftCard = ({
         <input
           className="dash-title-input"
           placeholder="Your task"
+          maxLength={128}
           autoFocus
           value={title}
           onChange={(e) => setTitle(e.target.value)}
