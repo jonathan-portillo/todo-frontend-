@@ -6,6 +6,11 @@ import { handle_change_login, logUserIn } from "../../actions/todoActions";
 import AuthLayout from "./authlayout";
 import * as yup from "yup";
 
+const formSchema = yup.object().shape({
+  username: yup.string().required("Username is a required field."),
+  password: yup.string().required("Password is a required field."),
+});
+
 const Login = (props) => {
   const [disable, setDisable] = useState(true);
   const [error, setError] = useState(null); // { message, field }
@@ -30,11 +35,6 @@ const Login = (props) => {
     setError(null);
     props.handle_change_login(e);
   };
-
-  const formSchema = yup.object().shape({
-    username: yup.string().required("Username is a required field."),
-    password: yup.string().required("Password is a required field."),
-  });
 
   useEffect(() => {
     formSchema.isValid(props.loginForm).then((valid) => {

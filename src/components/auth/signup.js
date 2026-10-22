@@ -6,17 +6,17 @@ import Textfield from "@mui/material/TextField";
 import AuthLayout from "./authlayout";
 import * as yup from "yup";
 
+const formSchema = yup.object().shape({
+  username: yup.string().required("Username is a required field."),
+  password: yup.string().required("Password is a required field."),
+});
+
 const SignUp = (props) => {
   const [disable, setDisable] = useState(true);
   const [error, setError] = useState(null); // { message, field }
   const [submitting, setSubmitting] = useState(false);
 
   let navigate = useNavigate();
-
-  const formSchema = yup.object().shape({
-    username: yup.string().required("Username is a required field."),
-    password: yup.string().required("Password is a required field."),
-  });
 
   useEffect(() => {
     formSchema.isValid(props.signUpForm).then((valid) => {

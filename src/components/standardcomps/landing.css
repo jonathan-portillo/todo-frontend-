@@ -269,7 +269,7 @@ html[data-theme="dark"] .lp-card-head {
 /* keep the pastel's hue, but make it deeper and more saturated for dark mode */
 @supports (color: oklch(from red l c h)) {
   html[data-theme="dark"] .lp-card-head {
-    background: oklch(from var(--tint, #e4defd) 0.44 calc(c * 3) h);
+    background: oklch(from var(--tint, #e4defd) 0.44 0.13 h);
   }
 }
 
