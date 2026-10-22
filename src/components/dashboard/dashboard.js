@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import { logout, getBoards } from "../../actions/todoActions";
-import ThemeToggle from "../standardcomps/themetoggle";
+import { getBoards } from "../../actions/todoActions";
+import AppHeader from "./appheader";
+import AppFooter from "./appfooter";
 import BoardTabs from "./boardtabs";
 import CurrentTasks from "../task/currenttask";
-import TrashView from "../task/trashview";
 import SideNav from "./sidenav";
+import { getUsername } from "../../utils/username";
 import "./dashboard.css";
 
 const Dashboard = (props) => {
-  const navigate = useNavigate();
   const [drafting, setDrafting] = useState(false);
-  const [inTrash, setInTrash] = useState(false);
+  const username = getUsername();
 
   // load the tabs first, so lists know which tab they belong to
   useEffect(() => {
@@ -20,46 +19,26 @@ const Dashboard = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLogout = () => {
-    props.logout();
-    navigate("/");
-  };
-
   return (
     <div className="dash">
-      <header className="dash-header">
-        <span className="dash-brand">Task Note</span>
-        <div className="dash-header-tools">
-          <ThemeToggle />
-          <button className="dash-link" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="dash-main">
         <div className="dash-bar">
-          <h1 className="dash-heading">{inTrash ? "Trash" : "Your tasks"}</h1>
+          <div>
+            <h1 className="dash-heading">
+              {username ? `Welcome, ${username}` : "Welcome back"}
+            </h1>
+            <p className="dash-subheading">What should we work on today?</p>
+          </div>
           <div className="dash-header-actions">
-            <SideNav
-              drafting={drafting}
-              onNew={() => setDrafting(true)}
-              inTrash={inTrash}
-              onToggleTrash={() => {
-                setDrafting(false);
-                setInTrash(!inTrash);
-              }}
-            />
+            <SideNav drafting={drafting} onNew={() => setDrafting(true)} />
           </div>
         </div>
-        {!inTrash && (
-          <BoardTabs onSwitch={() => setDrafting(false)} />
-        )}
+        <BoardTabs onSwitch={() => setDrafting(false)} />
         <div className="dash-divider" aria-hidden="true" />
         <div className="dash-content">
-          {!props.boardsReady ? null : inTrash ? (
-            <TrashView />
-          ) : (
+          {props.boardsReady && (
             <CurrentTasks
               drafting={drafting}
               onDraftDone={() => setDrafting(false)}
@@ -68,23 +47,7 @@ const Dashboard = (props) => {
         </div>
       </main>
 
-      <footer className="dash-footer">
-        <a
-          href="https://github.com/jonathan-portillo/todo-frontend-"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub
-        </a>
-        <a
-          href="https://www.linkedin.com/in/jonathanportillo93/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LinkedIn
-        </a>
-        <a href="mailto:jonport93@gmail.com">Contact</a>
-      </footer>
+      <AppFooter />
     </div>
   );
 };
@@ -93,4 +56,4 @@ const mapStateToProps = (state) => ({
   boardsReady: state.activeBoard !== null,
 });
 
-export default connect(mapStateToProps, { logout, getBoards })(Dashboard);
+export default connect(mapStateToProps, { getBoards })(Dashboard);

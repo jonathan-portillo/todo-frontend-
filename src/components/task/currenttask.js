@@ -18,6 +18,8 @@ import NoteDescription from "../notes/noteDescription";
 import TaskTitle from "./tasktitle";
 import DraftCard from "./draftcard";
 import { getTint } from "../../utils/tints";
+import { useNarrow } from "../../utils/usenarrow";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   CARD_W,
   DEFAULT_H,
@@ -47,11 +49,21 @@ const clearDropTargets = () =>
     .querySelectorAll(".dash-tab.drop-target")
     .forEach((el) => el.classList.remove("drop-target"));
 
+const readOrder = (key) => {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(value) ? value : [];
+  } catch (e) {
+    return [];
+  }
+};
+
 const TaskCard = ({
   task,
   x,
   y,
   bounds,
+  stacked,
   activeBoard,
   raised,
   onDelete,
@@ -60,6 +72,7 @@ const TaskCard = ({
   onResize,
   onRaise,
   onSize,
+  onReorder,
 }) => {
   const key = `collapsed_${task.id}`;
   const [collapsed, setCollapsed] = useState(
@@ -71,6 +84,8 @@ const TaskCard = ({
   const cardRef = useRef(null);
   const start = useRef(null);
   const moved = useRef(false);
+  const [lift, setLift] = useState(null); // vertical offset while reordering on a phone
+  const liftStart = useRef(null);
 
   const toggle = () => {
     const next = !collapsed;
@@ -89,7 +104,7 @@ const TaskCard = ({
   }, [task.id]);
 
   const handlePointerDown = (e) => {
-    if (e.button !== 0) return;
+    if (stacked || e.button !== 0) return;
     if (!e.target.closest(".dash-card-head")) return;
     if (e.target.closest("button, input, textarea")) return;
     onRaise(task.id);
@@ -125,9 +140,33 @@ const TaskCard = ({
     setDrag(null);
   };
 
+  // phone layout: drag the grip up or down to change the order
+  const handleLiftDown = (e) => {
+    onRaise(task.id);
+    liftStart.current = e.pageY;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setLift(0);
+  };
+
+  const handleLiftMove = (e) => {
+    if (liftStart.current == null) return;
+    // scroll the page when the finger nears the top or bottom edge
+    if (e.clientY < 70) window.scrollBy(0, -12);
+    else if (e.clientY > window.innerHeight - 70) window.scrollBy(0, 12);
+    setLift(e.pageY - liftStart.current);
+  };
+
+  const handleLiftUp = () => {
+    if (liftStart.current == null) return;
+    liftStart.current = null;
+    const rect = cardRef.current.getBoundingClientRect();
+    onReorder(task.id, rect.top + rect.height / 2);
+    setLift(null);
+  };
+
   // drag the bottom-right corner to resize
   const handleResizeDown = (e) => {
-    if (e.button !== 0) return;
+    if (stacked || e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
     onRaise(task.id);
@@ -167,21 +206,29 @@ const TaskCard = ({
   return (
     <div
       ref={cardRef}
+      data-task-id={task.id}
       className={`dash-card ${collapsed ? "collapsed" : ""} ${
-        drag ? "dragging" : ""
+        drag || lift !== null ? "dragging" : ""
       }`}
-      style={{
-        "--tint": getTint(task.id),
-        left: drag ? drag.x : x,
-        top: drag ? drag.y : y,
-        zIndex: raised ? 5 : undefined,
-        width: resizing ? resizing.w : task.width || undefined,
-        minHeight: collapsed
-          ? undefined
-          : resizing
-          ? resizing.h
-          : task.height || undefined,
-      }}
+      style={
+        stacked
+          ? {
+              "--tint": getTint(task.id),
+              transform: lift !== null ? `translateY(${lift}px)` : undefined,
+            }
+          : {
+              "--tint": getTint(task.id),
+              left: drag ? drag.x : x,
+              top: drag ? drag.y : y,
+              zIndex: raised ? 5 : undefined,
+              width: resizing ? resizing.w : task.width || undefined,
+              minHeight: collapsed
+                ? undefined
+                : resizing
+                ? resizing.h
+                : task.height || undefined,
+            }
+      }
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -194,13 +241,28 @@ const TaskCard = ({
         collapsed={collapsed}
         onDelete={onDelete}
         onToggleCollapse={toggle}
+        grip={
+          stacked ? (
+            <span
+              className="dash-reorder"
+              role="button"
+              aria-label="drag to reorder"
+              onPointerDown={handleLiftDown}
+              onPointerMove={handleLiftMove}
+              onPointerUp={handleLiftUp}
+              onPointerCancel={handleLiftUp}
+            >
+              <DragIndicatorIcon fontSize="small" />
+            </span>
+          ) : null
+        }
       />
       {!collapsed && (
         <div className="dash-card-body">
           <NoteDescription id={task.id} title={task.todo_title} />
         </div>
       )}
-      {!collapsed && (
+      {!collapsed && !stacked && (
         <div
           className="dash-resize"
           title="Drag to resize"
@@ -221,12 +283,16 @@ const CurrentTasks = (props) => {
   const allTasks = props.allTasks.filter(
     (t) => (t.board_id ?? props.firstBoard) === activeBoard
   );
+  const stacked = useNarrow();
   const [lastDeleted, setLastDeleted] = useState(null);
   const [sizes, setSizes] = useState({});
   const [canvasW, setCanvasW] = useState(0);
   const [bounds, setBounds] = useState({ minX: 0, maxX: 0 });
   const [draftPos, setDraftPos] = useState(null);
   const [raisedId, setRaisedId] = useState(null); // last card touched stays on top
+  const orderKey = `order_board_${activeBoard}`;
+  const [savedOrder, setSavedOrder] = useState(() => readOrder(orderKey));
+  useEffect(() => setSavedOrder(readOrder(orderKey)), [orderKey]);
   const timer = useRef(null);
   const canvasRef = useRef(null);
 
@@ -263,6 +329,37 @@ const CurrentTasks = (props) => {
   }, []);
 
   const layout = computeLayout(allTasks, sizes, canvasW, bounds);
+  // on a phone the cards stack in the order they read on the desktop board,
+  // unless the user has reordered them (that order is kept on this device)
+  const readingOrder = [...allTasks].sort(
+    (a, b) => layout[a.id].y - layout[b.id].y || layout[a.id].x - layout[b.id].x
+  );
+  const rank = (t) => {
+    const i = savedOrder.indexOf(t.id);
+    return i === -1 ? Infinity : i;
+  };
+  const ordered = stacked
+    ? [...readingOrder].sort((a, b) => rank(a) - rank(b)) // stable: new cards keep their place at the end
+    : allTasks;
+
+  const handleReorder = (id, centerY) => {
+    const others = ordered.filter((t) => t.id !== id);
+    const above = others.filter((t) => {
+      const el = document.querySelector(`[data-task-id="${t.id}"]`);
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.top + r.height / 2 < centerY;
+    }).length;
+    const moving = ordered.find((t) => t.id === id);
+    others.splice(above, 0, moving);
+    const next = others.map((t) => t.id);
+    setSavedOrder(next);
+    try {
+      localStorage.setItem(orderKey, JSON.stringify(next));
+    } catch (e) {
+      // storage unavailable: the order just lasts for this visit
+    }
+  };
 
   // when a new card is started, put it in the first free spot
   const layoutRef = useRef();
@@ -317,17 +414,28 @@ const CurrentTasks = (props) => {
         <p className="dash-empty">No tasks yet. Add your first one!</p>
       )}
       <div
-        className="dash-canvas"
+        className={`dash-canvas ${stacked ? "stacked" : ""}`}
         ref={canvasRef}
-        style={{ height: bottom + 40 }}
+        style={stacked ? undefined : { height: bottom + 40 }}
       >
-        {allTasks.map((task) => (
+        {props.drafting && stacked && (
+          <DraftCard
+            onDone={props.onDraftDone}
+            position={{ x: 0, y: 0 }}
+            bounds={bounds}
+            stacked
+            boardId={activeBoard}
+            onSize={(h) => handleSize("draft", h)}
+          />
+        )}
+        {ordered.map((task) => (
           <TaskCard
             key={task.id}
             task={task}
             x={layout[task.id].x}
             y={layout[task.id].y}
             bounds={bounds}
+            stacked={stacked}
             activeBoard={activeBoard}
             onMoveToBoard={moveTask}
             onResize={saveSize}
@@ -336,9 +444,10 @@ const CurrentTasks = (props) => {
             raised={raisedId === task.id}
             onRaise={setRaisedId}
             onSize={handleSize}
+            onReorder={handleReorder}
           />
         ))}
-        {props.drafting && draftPos && (
+        {props.drafting && !stacked && draftPos && (
           <DraftCard
             onDone={props.onDraftDone}
             position={draftPos}

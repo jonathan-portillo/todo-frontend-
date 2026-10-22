@@ -238,8 +238,22 @@
 }
 
 @media (max-width: 40rem) {
+  .lp-header {
+    padding: 1rem;
+  }
+  .lp-hero {
+    padding: 3rem 1rem 2.5rem;
+  }
+  .lp-sub {
+    font-size: 1.05rem;
+  }
+  .lp-cta {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .lp-features {
     grid-template-columns: 1fr;
+    padding: 0 1rem 3rem;
   }
 }
 

@@ -1,4 +1,5 @@
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { notifyAuthChange } from "../utils/username";
 
 export const ADD_NEW_USER = "ADD_NEW_USER";
 export const ADD_NEW_USER_SUCCESS = "ADD_NEW_USER_SUCCESS";
@@ -124,6 +125,24 @@ export const logUserIn = (cred) => (dispatch) => {
       return error;
     });
 };
+
+//ACCOUNT SETTINGS
+
+export const changeUsername = (newUsername, password) => () =>
+  axiosWithAuth()
+    .put("/auth/username", { newUsername, password })
+    .then((res) => {
+      localStorage.setItem("token", res.data.token);
+      notifyAuthChange();
+      return { ok: true };
+    })
+    .catch((err) => authError(err, "Couldn't change your username."));
+
+export const changePassword = (currentPassword, newPassword) => () =>
+  axiosWithAuth()
+    .put("/auth/password", { currentPassword, newPassword })
+    .then(() => ({ ok: true }))
+    .catch((err) => authError(err, "Couldn't change your password."));
 
 //APP CHECKS IF LOGGED IN EVEN ON REFRESH
 

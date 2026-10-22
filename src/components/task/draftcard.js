@@ -13,6 +13,7 @@ const DraftCard = ({
   position,
   bounds,
   boardId,
+  stacked,
   onSize,
 }) => {
   const [title, setTitle] = useState("");
@@ -62,7 +63,7 @@ const DraftCard = ({
 
   // drag the card by its header or grip, like a saved card
   const handlePointerDown = (e) => {
-    if (e.button !== 0 || !e.target.closest(".dash-card-head")) return;
+    if (stacked || e.button !== 0 || !e.target.closest(".dash-card-head")) return;
     if (e.target.closest("button, input, textarea")) return;
     start.current = { px: e.clientX, py: e.clientY, x: pos.x, y: pos.y };
     cardRef.current.setPointerCapture(e.pointerId);
@@ -91,7 +92,11 @@ const DraftCard = ({
     <form
       ref={cardRef}
       className={`dash-card dash-card-draft ${dragging ? "dragging" : ""}`}
-      style={{ "--tint": tint, left: pos.x, top: pos.y }}
+      style={
+        stacked
+          ? { "--tint": tint }
+          : { "--tint": tint, left: pos.x, top: pos.y }
+      }
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}

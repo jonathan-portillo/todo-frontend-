@@ -44,6 +44,7 @@ const TaskTitle = (props) => {
     <>
       <input type="checkbox" className="dash-toggle" id={`task_${task.id}`} />
       <div className="dash-card-head">
+        {props.grip}
         {isEditing ? (
           <input
             type="text"

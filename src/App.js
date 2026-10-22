@@ -7,6 +7,7 @@ import Landing from "./components/standardcomps/landing";
 import SignUp from "./components/auth/signup";
 import About from "./components/standardcomps/about";
 import Dashboard from "./components/dashboard/dashboard";
+import Settings from "./components/settings/settings";
 import LoginPage from "./components/auth/loginpage";
 
 function App() {
@@ -19,6 +20,14 @@ function App() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
             </PrivateRoute>
           }
         />
