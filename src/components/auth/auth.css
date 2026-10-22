@@ -1,5 +1,5 @@
 .auth {
-  --accent: #5b4cf0;
+  --accent: #2b6cd4;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@ body:has(.auth) {
 }
 
 .auth-form .MuiInputLabel-root.Mui-focused {
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
 }
 
 .auth-submit {
@@ -91,7 +91,7 @@ body:has(.auth) {
 }
 
 .auth-submit:hover:not(:disabled) {
-  background: #4a3cd8;
+  background: #2459b3;
 }
 
 .auth-submit:disabled {
@@ -107,7 +107,7 @@ body:has(.auth) {
 }
 
 .auth-switch a {
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
   font-weight: 600;
 }
 

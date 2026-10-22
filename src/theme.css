@@ -9,33 +9,35 @@
   --border: #ecece6;
   --border-strong: #d6d6d0;
   --line: #efefe9;
-  --accent-soft: #d9d3fb;
-  --tab-border: #e4e1fb;
-  --hover-bg: #f1effd;
+  --accent-soft: #c9dcf7;
+  --tab-border: #d3e2f8;
+  --hover-bg: #ebf2fc;
   --danger-bg: #fdecec;
   --danger-border: #f3c4bf;
   --danger-text: #c0392b;
   --toast-bg: #1a1a1a;
+  --accent-text: #2b6cd4;
 }
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0f1014;
-  --surface: #1a1b22;
+  --bg: #1c1d24;
+  --surface: #262832;
   --text: #ececf3;
   --text-2: #d2d3de;
   --muted: #a0a3b5;
-  --faint: #6c6f84;
-  --border: #2a2c38;
-  --border-strong: #3a3d4d;
-  --line: #2a2c38;
-  --accent-soft: #3d3680;
-  --tab-border: #38336e;
-  --hover-bg: #25233f;
+  --faint: #7f8398;
+  --border: #343746;
+  --border-strong: #464a5c;
+  --line: #343746;
+  --accent-soft: #1f4685;
+  --tab-border: #27498a;
+  --hover-bg: #26344f;
   --danger-bg: #3a1d1d;
   --danger-border: #6b2d2a;
   --danger-text: #ff8a80;
-  --toast-bg: #2f3140;
+  --toast-bg: #3a3d4e;
+  --accent-text: #8fb8f5; /* lighter blue so text reads on dark surfaces */
 }
 
 html[data-theme="dark"] body {
@@ -63,6 +65,6 @@ html[data-theme="dark"] body {
 }
 
 .theme-toggle:focus-visible {
-  outline: 2px solid #5b4cf0;
+  outline: 2px solid #2b6cd4;
   outline-offset: 2px;
 }

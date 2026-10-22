@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import ThemeToggle from "./themetoggle";
 import "./landing.css";
@@ -152,21 +152,7 @@ const Landing = (props) => {
       </section>
 
       <footer className="lp-footer">
-        <a
-          href="https://github.com/jonathan-portillo/todo-frontend-"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub
-        </a>
-        <a
-          href="https://www.linkedin.com/in/jonathanportillo93/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LinkedIn
-        </a>
-        <a href="mailto:jonport93@gmail.com">Contact</a>
+        <Link to="/contact">Contact</Link>
       </footer>
     </div>
   );

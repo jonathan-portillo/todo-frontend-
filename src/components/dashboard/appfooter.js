@@ -1,22 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const AppFooter = () => (
   <footer className="dash-footer">
-    <a
-      href="https://github.com/jonathan-portillo/todo-frontend-"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      GitHub
-    </a>
-    <a
-      href="https://www.linkedin.com/in/jonathanportillo93/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      LinkedIn
-    </a>
-    <a href="mailto:jonport93@gmail.com">Contact</a>
+    <Link to="/contact">Contact</Link>
   </footer>
 );
 

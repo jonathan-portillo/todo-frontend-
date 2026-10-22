@@ -1,0 +1,51 @@
+.contact-card {
+  max-width: 30rem;
+}
+
+.contact-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.contact-direct {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+
+.contact-direct button {
+  flex: none;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.contact-links a {
+  color: var(--accent-text, var(--accent));
+  font-weight: 600;
+}
+
+.contact-links a:hover {
+  text-decoration: underline;
+}

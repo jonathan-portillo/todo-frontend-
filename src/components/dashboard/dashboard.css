@@ -1,5 +1,5 @@
 .dash {
-  --accent: #5b4cf0;
+  --accent: #2b6cd4;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -87,14 +87,14 @@ body:has(.dash) {
 }
 
 .dash-tab:hover {
-  background: rgba(91, 76, 240, 0.06);
+  background: rgba(43, 108, 212, 0.06);
   color: var(--text);
 }
 
 /* a card is being dragged over this tab */
 .dash-tab.drop-target {
-  background: rgba(91, 76, 240, 0.14);
-  color: var(--accent);
+  background: rgba(43, 108, 212, 0.14);
+  color: var(--accent-text, var(--accent));
   border-color: var(--accent);
   border-style: dashed;
   transform: translateY(-2px);
@@ -102,9 +102,9 @@ body:has(.dash) {
 
 .dash-tab.active {
   background: var(--surface);
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
   border-color: var(--tab-border);
-  box-shadow: 0 -4px 12px -8px rgba(91, 76, 240, 0.4);
+  box-shadow: 0 -4px 12px -8px rgba(43, 108, 212, 0.4);
 }
 
 .dash-tab-name {
@@ -150,7 +150,7 @@ body:has(.dash) {
 
 .dash-tab-tools button:hover {
   background: var(--hover-bg);
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
 }
 
 .dash-tab-add {
@@ -168,24 +168,20 @@ body:has(.dash) {
 
 .dash-tab-add:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
 }
 
 /* the top edge of the board: cards can't be dragged above this line */
 .dash-divider {
-  height: 2px;
+  height: 1px;
   margin: 0 -2rem 1.75rem;
-  border-radius: 2px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--accent-soft) 12%,
-    var(--accent) 50%,
-    var(--accent-soft) 88%,
+    var(--border-strong) 12%,
+    var(--border-strong) 88%,
     transparent 100%
   );
-  box-shadow: 0 4px 14px -2px rgba(91, 76, 240, 0.35);
-  opacity: 0.85;
 }
 
 .dash-heading {
@@ -227,7 +223,7 @@ body:has(.dash) {
 }
 
 .dash-hbtn-primary:hover:not(:disabled) {
-  background: #4a3cd8;
+  background: #2459b3;
 }
 
 .dash-hbtn:disabled {
@@ -269,7 +265,7 @@ body:has(.dash) {
 }
 
 .dash-btn-primary:hover {
-  background: #4a3cd8;
+  background: #2459b3;
 }
 
 .dash-btn-outline {
@@ -496,7 +492,7 @@ body:has(.dash) {
 
 /* draft card */
 .dash-card-draft {
-  box-shadow: 0 0 0 2px var(--accent), 0 14px 28px -14px rgba(91, 76, 240, 0.4);
+  box-shadow: 0 0 0 2px var(--accent), 0 14px 28px -14px rgba(43, 108, 212, 0.4);
 }
 
 .dash-draft-actions {
@@ -630,7 +626,7 @@ body:has(.dash) {
 .dash-toast button {
   background: none;
   border: 0;
-  color: #b9b0ff;
+  color: #a9c8f5;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -777,6 +773,13 @@ body:has(.dash) {
 /* dark mode: soften the pastel header bands and keep the icons readable */
 html[data-theme="dark"] .dash-card-head {
   background: color-mix(in srgb, var(--tint, #e4defd) 42%, var(--surface));
+}
+
+/* keep the pastel's hue, but make it deeper and more saturated for dark mode */
+@supports (color: oklch(from red l c h)) {
+  html[data-theme="dark"] .dash-card-head {
+    background: oklch(from var(--tint, #e4defd) 0.44 calc(c * 3) h);
+  }
 }
 
 .dash-card-head .MuiIconButton-root {
@@ -954,7 +957,7 @@ html[data-theme="dark"] .dash-card-head {
 
 .dash-success {
   background: var(--hover-bg);
-  color: var(--accent);
+  color: var(--accent-text, var(--accent));
   border-radius: 0.5rem;
   padding: 0.65rem 0.85rem;
   font-size: 0.9rem;

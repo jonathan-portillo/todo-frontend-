@@ -8,6 +8,7 @@ import SignUp from "./components/auth/signup";
 import About from "./components/standardcomps/about";
 import Dashboard from "./components/dashboard/dashboard";
 import Settings from "./components/settings/settings";
+import Contact from "./components/contact/contact";
 import LoginPage from "./components/auth/loginpage";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<SignUp />} />
         <Route
